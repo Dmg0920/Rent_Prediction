@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>租金預測系統</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 40px;
+            margin-top: 40px;
+        }
+        
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 40px;
+            font-size: 1.1em;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 1em;
+        }
+        
+        input[type="text"],
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+        
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.2em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 20px;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+        
+        .result-box {
+            margin-top: 30px;
+            padding: 25px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .result-success {
+            background: #e8f5e9;
+            border: 2px solid #4caf50;
+            color: #2e7d32;
+        }
+        
+        .result-error {
+            background: #ffebee;
+            border: 2px solid #f44336;
+            color: #c62828;
+        }
+        
+        .prediction-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        
+        .prediction-label {
+            font-size: 1.2em;
+            opacity: 0.8;
+        }
+        
+        @media (max-width: 600px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏠 租金預測系統</h1>
+        <p class="subtitle">輸入房屋資訊，預測租金價格</p>
+        
+        <form method="POST">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="city">城市 *</label>
+                <select id="city" name="city" required>
+                    <option value="">請選擇城市</option>
+                    <option value="臺北市">臺北市</option>
+                    <option value="新北市">新北市</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="district">鄉鎮市區 *</label>
+                <input type="text" id="district" name="district" placeholder="例如：大安區、板橋區" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="building_type">建物型態 *</label>
+                <select id="building_type" name="building_type" required>
+                    <option value="">請選擇建物型態</option>
+                    <option value="公寓(5樓含以下無電梯)">公寓(5樓含以下無電梯)</option>
+                    <option value="華廈(10層含以下有電梯)">華廈(10層含以下有電梯)</option>
+                    <option value="住宅大樓(11層含以上有電梯)">住宅大樓(11層含以上有電梯)</option>
+                    <option value="透天厝">透天厝</option>
+                    <option value="其他">其他</option>
+                </select>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="area">坪數 *</label>
+                    <input type="number" id="area" name="area" step="0.1" min="0" placeholder="例如：25.5" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="age">屋齡 *</label>
+                    <input type="number" id="age" name="age" step="1" min="0" placeholder="例如：10" required>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="floor">樓層 *</label>
+                <input type="number" id="floor" name="floor" step="1" placeholder="例如：5" required>
+            </div>
+            
+            <div class="form-group">
+                <label>設施 *</label>
+                <div class="checkbox-group">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="has_elevator" name="has_elevator" value="1">
+                        <label for="has_elevator" style="margin:0; font-weight:normal;">有電梯</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="has_manager" name="has_manager" value="1">
+                        <label for="has_manager" style="margin:0; font-weight:normal;">有管理組織</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="has_furniture" name="has_furniture" value="1">
+                        <label for="has_furniture" style="margin:0; font-weight:normal;">有附傢俱</label>
+                    </div>
+                </div>
+            </div>
+            
+            <button type="submit" class="submit-btn">預測租金</button>
+        </form>
+        
+        {% if prediction %}
+        <div class="result-box result-success">
+            <div class="prediction-label">預測租金</div>
+            <div class="prediction-value">NT$ {{ prediction|floatformat:0 }}</div>
+            <div style="margin-top: 10px; font-size: 0.9em;">元/月</div>
+        </div>
+        {% endif %}
+        
+        {% if error %}
+        <div class="result-box result-error">
+            <div style="font-size: 1.1em; font-weight: 600;">⚠️ 錯誤</div>
+            <div style="margin-top: 10px;">{{ error }}</div>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>

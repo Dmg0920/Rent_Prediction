@@ -1,0 +1,9 @@
+name,schema,description
+a_lvr_land_c_land.csv,schema-land.csv,臺北市土地不動產租賃
+a_lvr_land_c_park.csv,schema-park.csv,臺北市停車場不動產租賃
+a_lvr_land_c.csv,schema-main-rent.csv,臺北市不動產租賃
+a_lvr_land_c_build.csv,schema-build.csv,臺北市建物不動產租賃
+f_lvr_land_c_build.csv,schema-build.csv,新北市建物不動產租賃
+f_lvr_land_c.csv,schema-main-rent.csv,新北市不動產租賃
+f_lvr_land_c_land.csv,schema-land.csv,新北市土地不動產租賃
+f_lvr_land_c_park.csv,schema-park.csv,新北市停車場不動產租賃

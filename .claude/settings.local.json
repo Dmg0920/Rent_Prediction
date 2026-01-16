@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find:*)",
+      "Bash(tree:*)",
+      "Bash(chmod:*)",
+      "Bash(ls:*)",
+      "Bash(cd:*)",
+      "Bash(python3:*)",
+      "Bash(.venv/bin/python3:*)"
+    ]
+  }
+}
