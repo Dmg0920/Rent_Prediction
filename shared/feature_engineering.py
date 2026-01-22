@@ -133,6 +133,55 @@ class FeatureEngineer:
         return '其他'
 
     @staticmethod
+    def add_derived_features(df):
+        """
+        新增衍生特徵
+
+        Args:
+            df: DataFrame
+
+        Returns:
+            新增衍生特徵的DataFrame
+        """
+        df = df.copy()
+
+        # 1. 樓層比例 (避免除以零)
+        if '樓層' in df.columns and '總樓層數' in df.columns:
+            df['樓層比例'] = df.apply(
+                lambda x: x['樓層'] / x['總樓層數'] if x['總樓層數'] > 0 else 0,
+                axis=1
+            )
+
+        # 2. 房間密度 (房數/坪數，避免除以零)
+        if '建物現況格局-房' in df.columns and '坪數' in df.columns:
+            df['房間密度'] = df.apply(
+                lambda x: x['建物現況格局-房'] / x['坪數'] if x['坪數'] > 0 else 0,
+                axis=1
+            )
+
+        # 3. 屋齡分類
+        if '屋齡' in df.columns:
+            df['屋齡_新屋'] = (df['屋齡'] < 5).astype(int)
+            df['屋齡_中古'] = ((df['屋齡'] >= 5) & (df['屋齡'] < 20)).astype(int)
+            df['屋齡_老屋'] = (df['屋齡'] >= 20).astype(int)
+
+        # 4. 高樓層標記 (10樓以上)
+        if '樓層' in df.columns:
+            df['高樓層'] = (df['樓層'] >= 10).astype(int)
+
+        # 5. 大坪數標記 (30坪以上)
+        if '坪數' in df.columns:
+            df['大坪數'] = (df['坪數'] >= 30).astype(int)
+
+        print("\n=== 衍生特徵 ===")
+        derived_cols = ['樓層比例', '房間密度', '屋齡_新屋', '屋齡_中古', '屋齡_老屋', '高樓層', '大坪數']
+        for col in derived_cols:
+            if col in df.columns:
+                print(f"  {col}: mean={df[col].mean():.3f}")
+
+        return df
+
+    @staticmethod
     def encode_features(df):
         """
         對分類特徵進行編碼

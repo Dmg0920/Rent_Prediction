@@ -21,12 +21,11 @@
         .container {
             max-width: 700px;
             margin: 0 auto;
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(255, 255, 255, 0.98);
             border-radius: 24px;
             box-shadow: 0 25px 80px rgba(0,0,0,0.5);
             padding: 48px;
             margin-top: 20px;
-            backdrop-filter: blur(10px);
         }
 
         .header {
@@ -52,22 +51,22 @@
         }
 
         .section {
-            margin-bottom: 32px;
+            margin-bottom: 28px;
         }
 
         .section-title {
-            font-size: 0.85em;
+            font-size: 0.8em;
             font-weight: 600;
             color: #0f3460;
             text-transform: uppercase;
             letter-spacing: 1px;
-            margin-bottom: 16px;
+            margin-bottom: 14px;
             padding-bottom: 8px;
             border-bottom: 2px solid #e94560;
         }
 
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 18px;
         }
 
         label {
@@ -101,6 +100,16 @@
             border-color: #e94560;
             background: #fff;
             box-shadow: 0 0 0 4px rgba(233, 69, 96, 0.1);
+        }
+
+        input:invalid:not(:placeholder-shown) {
+            border-color: #ff6b6b;
+        }
+
+        .input-hint {
+            font-size: 0.8em;
+            color: #888;
+            margin-top: 4px;
         }
 
         .form-row {
@@ -166,63 +175,199 @@
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            margin-top: 24px;
+            margin-top: 20px;
             letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
         }
 
-        .submit-btn:hover {
+        .submit-btn:hover:not(:disabled) {
             transform: translateY(-3px);
             box-shadow: 0 15px 35px rgba(233, 69, 96, 0.4);
         }
 
-        .submit-btn:active {
+        .submit-btn:active:not(:disabled) {
             transform: translateY(-1px);
         }
 
+        .submit-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .submit-btn .spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #fff;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-right: 10px;
+        }
+
+        .submit-btn.loading .spinner {
+            display: inline-block;
+        }
+
+        .submit-btn.loading .btn-text {
+            opacity: 0.8;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Result Box */
         .result-box {
             margin-top: 32px;
-            padding: 32px;
-            border-radius: 16px;
-            text-align: center;
+            border-radius: 20px;
+            overflow: hidden;
+            animation: slideUp 0.5s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .result-success {
-            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
-            border: none;
+            background: linear-gradient(135deg, #1a1a2e 0%, #0f3460 100%);
+            color: white;
+        }
+
+        .result-header {
+            padding: 24px 28px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .result-header h3 {
+            font-size: 1em;
+            font-weight: 500;
+            opacity: 0.9;
+            margin-bottom: 12px;
+        }
+
+        .total-rent {
+            font-size: 3.2em;
+            font-weight: 700;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .total-rent-unit {
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+
+        .result-details {
+            padding: 20px 28px;
+            background: rgba(255,255,255,0.05);
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+
+        .detail-value {
+            font-weight: 600;
+            font-size: 1em;
+        }
+
+        .calculation {
+            text-align: center;
+            padding: 16px 28px;
+            background: rgba(233, 69, 96, 0.2);
+            font-size: 0.95em;
+        }
+
+        .calculation-formula {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .calc-item {
+            padding: 6px 12px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 6px;
+        }
+
+        .calc-operator {
+            font-weight: 600;
+            opacity: 0.8;
+        }
+
+        .result-summary {
+            padding: 20px 28px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        .summary-item {
+            text-align: center;
+            padding: 12px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 10px;
+        }
+
+        .summary-value {
+            font-size: 1.2em;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .summary-label {
+            font-size: 0.75em;
+            opacity: 0.7;
         }
 
         .result-error {
             background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
-            border: none;
+            padding: 24px;
+            text-align: center;
         }
 
-        .prediction-label {
-            font-size: 1em;
-            color: #155724;
-            font-weight: 500;
+        .result-error h3 {
+            color: #721c24;
             margin-bottom: 8px;
         }
 
-        .prediction-value {
-            font-size: 3em;
-            font-weight: 700;
-            color: #155724;
-            margin: 8px 0;
-        }
-
-        .prediction-unit {
-            font-size: 1em;
-            color: #155724;
-            opacity: 0.8;
+        .result-error p {
+            color: #721c24;
+            opacity: 0.9;
         }
 
         .model-info {
-            margin-top: 40px;
-            padding: 16px;
+            margin-top: 32px;
+            padding: 14px;
             background: #f8f9fa;
             border-radius: 12px;
             text-align: center;
-            font-size: 0.85em;
+            font-size: 0.8em;
             color: #666;
         }
 
@@ -230,10 +375,146 @@
             color: #0f3460;
         }
 
+        /* Market Comparison */
+        .market-comparison {
+            margin-top: 24px;
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .market-header {
+            padding: 20px 24px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .market-header h4 {
+            font-size: 1em;
+            color: #333;
+            margin: 0;
+        }
+
+        .evaluation-badge {
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9em;
+            color: white;
+        }
+
+        .market-body {
+            padding: 24px;
+        }
+
+        .percentile-section {
+            margin-bottom: 24px;
+        }
+
+        .percentile-label {
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 12px;
+        }
+
+        .percentile-bar-container {
+            position: relative;
+            height: 32px;
+            background: linear-gradient(to right, #27ae60 0%, #2ecc71 25%, #f1c40f 50%, #e67e22 75%, #e74c3c 100%);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .percentile-marker {
+            position: absolute;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 24px;
+            height: 24px;
+            background: white;
+            border: 3px solid #333;
+            border-radius: 50%;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            z-index: 2;
+        }
+
+        .percentile-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 8px;
+            font-size: 0.75em;
+            color: #888;
+        }
+
+        .percentile-value {
+            text-align: center;
+            margin-top: 12px;
+            font-size: 0.95em;
+            color: #333;
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .comparison-card {
+            padding: 16px;
+            background: #f8f9fa;
+            border-radius: 12px;
+        }
+
+        .comparison-card-title {
+            font-size: 0.8em;
+            color: #888;
+            margin-bottom: 8px;
+        }
+
+        .comparison-card-value {
+            font-size: 1.4em;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .comparison-card-diff {
+            font-size: 0.85em;
+            margin-top: 4px;
+        }
+
+        .diff-positive {
+            color: #e74c3c;
+        }
+
+        .diff-negative {
+            color: #27ae60;
+        }
+
+        .diff-neutral {
+            color: #888;
+        }
+
+        .market-footer {
+            padding: 16px 24px;
+            background: #f8f9fa;
+            border-top: 1px solid #eee;
+            font-size: 0.8em;
+            color: #888;
+            text-align: center;
+        }
+
         @media (max-width: 600px) {
             .form-row,
             .form-row-3,
             .checkbox-group {
+                grid-template-columns: 1fr;
+            }
+
+            .result-summary {
                 grid-template-columns: 1fr;
             }
 
@@ -249,6 +530,10 @@
             .logo {
                 font-size: 2.5em;
             }
+
+            .total-rent {
+                font-size: 2.4em;
+            }
         }
     </style>
 </head>
@@ -260,7 +545,7 @@
             <p class="subtitle">台北市 / 新北市租金智慧預測</p>
         </div>
 
-        <form method="POST">
+        <form method="POST" id="predictForm">
             {% csrf_token %}
 
             <!-- 基本資訊 -->
@@ -270,12 +555,14 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label for="area">坪數 <span class="label-hint">(室內面積)</span></label>
-                        <input type="number" id="area" name="area" step="0.1" min="1" max="200" placeholder="例如：25" required>
+                        <input type="number" id="area" name="area" step="0.1" min="3" max="200" placeholder="例如：25" required>
+                        <div class="input-hint">一般住宅約 10-50 坪</div>
                     </div>
 
                     <div class="form-group">
                         <label for="age">屋齡 <span class="label-hint">(年)</span></label>
                         <input type="number" id="age" name="age" step="1" min="0" max="80" placeholder="例如：10" required>
+                        <div class="input-hint">新成屋 0-5 年</div>
                     </div>
                 </div>
 
@@ -283,6 +570,7 @@
                     <div class="form-group">
                         <label for="floor">所在樓層</label>
                         <input type="number" id="floor" name="floor" step="1" min="-1" max="50" placeholder="例如：5" required>
+                        <div class="input-hint">地下室填 -1</div>
                     </div>
 
                     <div class="form-group">
@@ -300,7 +588,7 @@
                     <div class="form-group">
                         <label for="rooms">房</label>
                         <select id="rooms" name="rooms" required>
-                            <option value="0">0</option>
+                            <option value="0">0 (套房)</option>
                             <option value="1" selected>1</option>
                             <option value="2">2</option>
                             <option value="3">3</option>
@@ -336,15 +624,15 @@
                 <div class="section-title">設施與服務</div>
 
                 <div class="checkbox-group">
-                    <label class="checkbox-item" onclick="this.classList.toggle('checked')">
+                    <label class="checkbox-item">
                         <input type="checkbox" id="has_elevator" name="has_elevator" value="1">
                         <span class="checkbox-label">電梯</span>
                     </label>
-                    <label class="checkbox-item" onclick="this.classList.toggle('checked')">
+                    <label class="checkbox-item">
                         <input type="checkbox" id="has_manager" name="has_manager" value="1">
                         <span class="checkbox-label">管理組織</span>
                     </label>
-                    <label class="checkbox-item" onclick="this.classList.toggle('checked')">
+                    <label class="checkbox-item">
                         <input type="checkbox" id="has_furniture" name="has_furniture" value="1">
                         <span class="checkbox-label">附傢俱</span>
                     </label>
@@ -356,42 +644,200 @@
                 <div class="section-title">車位</div>
 
                 <div class="form-group">
-                    <label for="parking_area">車位面積 <span class="label-hint">(平方公尺，無車位填 0)</span></label>
-                    <input type="number" id="parking_area" name="parking_area" step="0.1" min="0" max="100" value="0" placeholder="例如：12.5">
+                    <label for="parking_area">車位面積 <span class="label-hint">(平方公尺)</span></label>
+                    <input type="number" id="parking_area" name="parking_area" step="0.1" min="0" max="100" value="0" placeholder="無車位填 0">
+                    <div class="input-hint">一般車位約 8-15 平方公尺</div>
                 </div>
             </div>
 
-            <button type="submit" class="submit-btn">預測每坪租金</button>
+            <button type="submit" class="submit-btn" id="submitBtn">
+                <span class="spinner"></span>
+                <span class="btn-text">預測租金</span>
+            </button>
         </form>
 
-        {% if prediction %}
+        {% if result %}
         <div class="result-box result-success">
-            <div class="prediction-label">預測每坪租金</div>
-            <div class="prediction-value">NT$ {{ prediction|floatformat:0 }}</div>
-            <div class="prediction-unit">元 / 坪 / 月</div>
+            <div class="result-header">
+                <h3>預測月租金</h3>
+                <div class="total-rent">NT$ {{ result.total_rent|floatformat:0|default:"0" }}</div>
+                <div class="total-rent-unit">元 / 月</div>
+            </div>
+
+            <div class="calculation">
+                <div class="calculation-formula">
+                    <span class="calc-item">{{ result.rent_per_ping|floatformat:0 }} 元/坪</span>
+                    <span class="calc-operator">×</span>
+                    <span class="calc-item">{{ result.area }} 坪</span>
+                    <span class="calc-operator">=</span>
+                    <span class="calc-item"><strong>{{ result.total_rent|floatformat:0 }} 元</strong></span>
+                </div>
+            </div>
+
+            <div class="result-summary">
+                <div class="summary-item">
+                    <div class="summary-value">{{ result.rent_per_ping|floatformat:0 }}</div>
+                    <div class="summary-label">每坪租金</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-value">{{ result.rooms }}房{{ result.living_rooms }}廳{{ result.bathrooms }}衛</div>
+                    <div class="summary-label">格局</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-value">{{ result.floor }}F/{{ result.total_floor }}F</div>
+                    <div class="summary-label">樓層</div>
+                </div>
+            </div>
+
+            <div class="result-details">
+                <div class="detail-row">
+                    <span class="detail-label">坪數</span>
+                    <span class="detail-value">{{ result.area }} 坪</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">屋齡</span>
+                    <span class="detail-value">{{ result.age }} 年</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">設施</span>
+                    <span class="detail-value">
+                        {% if result.has_elevator %}電梯 {% endif %}
+                        {% if result.has_manager %}管理 {% endif %}
+                        {% if result.has_furniture %}傢俱{% endif %}
+                        {% if not result.has_elevator and not result.has_manager and not result.has_furniture %}無{% endif %}
+                    </span>
+                </div>
+            </div>
         </div>
+
+        {% if result.market %}
+        <!-- 市場比較 -->
+        <div class="market-comparison">
+            <div class="market-header">
+                <h4>市場比較分析</h4>
+                <span class="evaluation-badge" style="background-color: {{ result.market.evaluation.color }}">
+                    {{ result.market.evaluation.text }}
+                </span>
+            </div>
+
+            <div class="market-body">
+                <!-- 百分位排名 -->
+                <div class="percentile-section">
+                    <div class="percentile-label">租金水平分佈</div>
+                    <div class="percentile-bar-container">
+                        <div class="percentile-marker" style="left: {{ result.market.percentile }}%"></div>
+                    </div>
+                    <div class="percentile-labels">
+                        <span>便宜</span>
+                        <span>適中</span>
+                        <span>偏高</span>
+                    </div>
+                    <div class="percentile-value">
+                        {{ result.market.percentile_text }}
+                    </div>
+                </div>
+
+                <!-- 比較卡片 -->
+                <div class="comparison-grid">
+                    <div class="comparison-card">
+                        <div class="comparison-card-title">{{ result.market.area_range }}平均</div>
+                        <div class="comparison-card-value">{{ result.market.area_avg }} 元/坪</div>
+                        <div class="comparison-card-diff {% if result.market.area_diff > 0 %}diff-positive{% elif result.market.area_diff < 0 %}diff-negative{% else %}diff-neutral{% endif %}">
+                            {% if result.market.area_diff > 0 %}+{% endif %}{{ result.market.area_diff }} 元
+                            ({% if result.market.area_diff_pct > 0 %}+{% endif %}{{ result.market.area_diff_pct }}%)
+                        </div>
+                    </div>
+
+                    <div class="comparison-card">
+                        <div class="comparison-card-title">整體市場平均</div>
+                        <div class="comparison-card-value">{{ result.market.overall_avg }} 元/坪</div>
+                        <div class="comparison-card-diff {% if result.market.overall_diff > 0 %}diff-positive{% elif result.market.overall_diff < 0 %}diff-negative{% else %}diff-neutral{% endif %}">
+                            {% if result.market.overall_diff > 0 %}+{% endif %}{{ result.market.overall_diff }} 元
+                            ({% if result.market.overall_diff_pct > 0 %}+{% endif %}{{ result.market.overall_diff_pct }}%)
+                        </div>
+                    </div>
+
+                    <div class="comparison-card">
+                        <div class="comparison-card-title">{{ result.rooms }}房物件平均</div>
+                        <div class="comparison-card-value">{{ result.market.room_avg }} 元/坪</div>
+                        <div class="comparison-card-diff {% if result.market.room_diff > 0 %}diff-positive{% elif result.market.room_diff < 0 %}diff-negative{% else %}diff-neutral{% endif %}">
+                            {% if result.market.room_diff > 0 %}+{% endif %}{{ result.market.room_diff }} 元
+                        </div>
+                    </div>
+
+                    <div class="comparison-card">
+                        <div class="comparison-card-title">{{ result.market.age_range }}平均</div>
+                        <div class="comparison-card-value">{{ result.market.age_avg }} 元/坪</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="market-footer">
+                基於 {{ result.market.total_samples }} 筆實價登錄資料分析
+            </div>
+        </div>
+        {% endif %}
         {% endif %}
 
         {% if error %}
         <div class="result-box result-error">
-            <div style="font-size: 1.2em; font-weight: 600; color: #721c24;">預測失敗</div>
-            <div style="margin-top: 12px; color: #721c24;">{{ error }}</div>
+            <h3>預測失敗</h3>
+            <p>{{ error }}</p>
         </div>
         {% endif %}
 
         <div class="model-info">
             模型：<strong>Random Forest</strong> |
-            特徵數：<strong>15</strong> |
-            R²：<strong>0.67</strong>
+            準確度：<strong>R² = 0.67</strong> |
+            資料來源：<strong>實價登錄</strong>
         </div>
     </div>
 
     <script>
-        // 初始化 checkbox 狀態
-        document.querySelectorAll('.checkbox-item input[type="checkbox"]').forEach(function(checkbox) {
+        // Checkbox styling
+        document.querySelectorAll('.checkbox-item').forEach(function(item) {
+            const checkbox = item.querySelector('input[type="checkbox"]');
+
             checkbox.addEventListener('change', function() {
-                this.closest('.checkbox-item').classList.toggle('checked', this.checked);
+                item.classList.toggle('checked', this.checked);
             });
+
+            // Initialize state
+            if (checkbox.checked) {
+                item.classList.add('checked');
+            }
+        });
+
+        // Form submission with loading state
+        document.getElementById('predictForm').addEventListener('submit', function(e) {
+            const btn = document.getElementById('submitBtn');
+            btn.classList.add('loading');
+            btn.disabled = true;
+            btn.querySelector('.btn-text').textContent = '預測中...';
+        });
+
+        // Input validation feedback
+        document.querySelectorAll('input[type="number"]').forEach(function(input) {
+            input.addEventListener('input', function() {
+                const min = parseFloat(this.min);
+                const max = parseFloat(this.max);
+                const value = parseFloat(this.value);
+
+                if (value < min || value > max) {
+                    this.style.borderColor = '#ff6b6b';
+                } else {
+                    this.style.borderColor = '';
+                }
+            });
+        });
+
+        // Auto-suggest: if total_floor < floor, adjust
+        document.getElementById('floor').addEventListener('change', function() {
+            const floor = parseInt(this.value) || 1;
+            const totalFloor = document.getElementById('total_floor');
+            if (!totalFloor.value || parseInt(totalFloor.value) < floor) {
+                totalFloor.value = floor;
+            }
         });
     </script>
 </body>
