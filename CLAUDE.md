@@ -53,10 +53,16 @@ ML Development (ml/)     →    Shared (shared/)    ←    Web Deployment (webap
 Models are saved via joblib with three components: the model object, scaler, and feature list. The web app loads these and reindexes input features to match training exactly.
 
 ## Tech Stack
-- **ML**: scikit-learn (Ridge, RandomForest, GradientBoosting), XGBoost, LightGBM
+- **ML**: scikit-learn (RandomForest, GradientBoosting), XGBoost, LightGBM
 - **Statistics**: statsmodels for hypothesis testing
 - **Web**: Django 4.2, SQLite
 - **Serialization**: joblib
+
+## Current Production Model
+- **Type**: Random Forest (100 trees, max_depth=15)
+- **Target**: 每坪租金 (rent per ping)
+- **R²**: 0.67
+- **Features**: 15 (坪數, 屋齡, 樓層, 總樓層數, 房/廳/衛, 電梯, 管理組織, 傢俱, 車位面積, etc.)
 
 ## Important Notes
 
