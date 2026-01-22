@@ -6,20 +6,21 @@ import numpy as np
 from django.shortcuts import render
 from django.conf import settings
 
-# --- 1. 設定路徑以匯入 shared ---
+# --- 1. 設定路徑 ---
 PROJECT_ROOT = os.path.abspath(os.path.join(str(settings.BASE_DIR), '..'))
 if PROJECT_ROOT not in sys.path:
     sys.path.insert(0, PROJECT_ROOT)
 
-# --- 2. 載入模型和市場統計 ---
+# --- 2. 載入模型、市場統計、地區資訊 ---
 MODEL_PATH = os.path.join(PROJECT_ROOT, 'ml', 'src', 'models', 'rent_prediction_model.pkl')
 STATS_PATH = os.path.join(PROJECT_ROOT, 'ml', 'src', 'models', 'market_stats.pkl')
+LOCATION_PATH = os.path.join(PROJECT_ROOT, 'ml', 'src', 'models', 'location_info.pkl')
 
 model_artifacts = {}
 market_stats = {}
+location_info = {}
 
 try:
-    print(f"正在載入模型: {MODEL_PATH}")
     if os.path.exists(MODEL_PATH):
         model_artifacts = joblib.load(MODEL_PATH)
         print("✅ 模型載入成功！")
@@ -27,12 +28,15 @@ try:
     if os.path.exists(STATS_PATH):
         market_stats = joblib.load(STATS_PATH)
         print("✅ 市場統計載入成功！")
+
+    if os.path.exists(LOCATION_PATH):
+        location_info = joblib.load(LOCATION_PATH)
+        print("✅ 地區資訊載入成功！")
 except Exception as e:
     print(f"❌ 載入發生錯誤: {e}")
 
 
 def get_area_range(ping):
-    """根據坪數返回區間標籤"""
     if ping < 10:
         return '小於10坪'
     elif ping < 20:
@@ -46,7 +50,6 @@ def get_area_range(ping):
 
 
 def get_age_range(age):
-    """根據屋齡返回區間標籤"""
     if age < 5:
         return '新屋(0-5年)'
     elif age < 15:
@@ -58,7 +61,6 @@ def get_age_range(age):
 
 
 def calculate_percentile(value, percentiles):
-    """計算數值在分佈中的百分位"""
     if value <= percentiles[10]:
         return 10
     elif value <= percentiles[25]:
@@ -74,8 +76,6 @@ def calculate_percentile(value, percentiles):
 
 
 def get_price_evaluation(rent_per_ping, area_avg, overall_avg):
-    """評估租金水平"""
-    # 與類似坪數比較
     if area_avg > 0:
         ratio = rent_per_ping / area_avg
         if ratio < 0.85:
@@ -92,7 +92,6 @@ def get_price_evaluation(rent_per_ping, area_avg, overall_avg):
 
 
 def get_market_comparison(rent_per_ping, ping, rooms, age):
-    """獲取市場比較資料"""
     if not market_stats:
         return None
 
@@ -101,55 +100,40 @@ def get_market_comparison(rent_per_ping, ping, rooms, age):
     by_rooms = market_stats.get('by_rooms', {})
     by_age = market_stats.get('by_age', {})
 
-    # 1. 計算百分位排名
     percentiles = overall.get('percentiles', {})
-    if percentiles:
-        percentile = calculate_percentile(rent_per_ping, percentiles)
-    else:
-        percentile = 50
+    percentile = calculate_percentile(rent_per_ping, percentiles) if percentiles else 50
 
-    # 2. 同坪數區間比較
     area_range = get_area_range(ping)
     area_data = by_area.get(area_range, {})
     area_avg = area_data.get('mean', 0)
     area_count = area_data.get('count', 0)
 
-    # 3. 同房數比較 (限制在合理範圍)
-    room_key = min(rooms, 5)  # 超過5房統一用5房
+    room_key = min(rooms, 5)
     room_data = by_rooms.get(room_key, by_rooms.get(float(room_key), {}))
     room_avg = room_data.get('mean', 0)
 
-    # 4. 同屋齡比較
     age_range = get_age_range(age)
     age_data = by_age.get(age_range, {})
     age_avg = age_data.get('mean', 0)
 
-    # 5. 租金評價
     evaluation = get_price_evaluation(rent_per_ping, area_avg, overall.get('mean', 0))
-
-    # 6. 計算與各類平均的差異
     overall_avg = overall.get('mean', 0)
 
     return {
         'percentile': int(percentile),
         'percentile_text': f"比 {100 - int(percentile)}% 的物件便宜" if percentile < 50 else f"比 {int(percentile)}% 的物件貴",
-
         'overall_avg': int(overall_avg),
         'overall_diff': int(rent_per_ping - overall_avg),
         'overall_diff_pct': int((rent_per_ping - overall_avg) / overall_avg * 100) if overall_avg > 0 else 0,
-
         'area_range': area_range,
         'area_avg': int(area_avg),
         'area_diff': int(rent_per_ping - area_avg) if area_avg > 0 else 0,
         'area_diff_pct': int((rent_per_ping - area_avg) / area_avg * 100) if area_avg > 0 else 0,
         'area_count': int(area_count),
-
         'room_avg': int(room_avg),
         'room_diff': int(rent_per_ping - room_avg) if room_avg > 0 else 0,
-
         'age_range': age_range,
         'age_avg': int(age_avg),
-
         'evaluation': evaluation,
         'total_samples': market_stats.get('total_samples', 0),
     }
@@ -164,12 +148,17 @@ def home(request):
     model = model_artifacts.get('model')
     scaler = model_artifacts.get('scaler')
 
+    # 傳遞地區資訊給模板
+    districts_by_city = location_info.get('districts_by_city', {})
+
     if request.method == 'POST':
         if not model:
             error_msg = "系統錯誤：模型未載入，無法預測。"
         else:
             try:
                 # A. 接收表單資料
+                city = request.POST.get('city')
+                district = request.POST.get('district')
                 ping = float(request.POST.get('area'))
                 age = float(request.POST.get('age'))
                 floor = float(request.POST.get('floor'))
@@ -203,25 +192,38 @@ def home(request):
                     '樓層': floor,
                 }
 
-                # C. 轉成 DataFrame 並對齊特徵
+                # C. 加入地區 One-Hot 特徵
+                for c in ['台北市', '新北市']:
+                    input_data[f'城市_{c}'] = 1 if city == c else 0
+
+                # 加入所有可能的鄉鎮市區特徵
+                all_districts = set()
+                for districts in districts_by_city.values():
+                    all_districts.update(districts)
+                for d in all_districts:
+                    input_data[f'鄉鎮市區_{d}'] = 1 if district == d else 0
+
+                # D. 轉成 DataFrame 並對齊特徵
                 df = pd.DataFrame([input_data])
                 df_aligned = df.reindex(columns=feature_names, fill_value=0)
 
-                # D. 標準化 & 預測
+                # E. 標準化 & 預測
                 X_scaled = scaler.transform(df_aligned)
                 log_price = model.predict(X_scaled)[0]
 
-                # E. 還原價格
+                # F. 還原價格
                 rent_per_ping = np.expm1(log_price)
                 total_rent = rent_per_ping * ping
 
-                # F. 取得市場比較
+                # G. 取得市場比較
                 market_comparison = get_market_comparison(rent_per_ping, ping, rooms, age)
 
-                # G. 組合結果
+                # H. 組合結果
                 result = {
                     'rent_per_ping': int(round(rent_per_ping)),
                     'total_rent': int(round(total_rent)),
+                    'city': city,
+                    'district': district,
                     'area': ping,
                     'rooms': rooms,
                     'living_rooms': living_rooms,
@@ -241,4 +243,8 @@ def home(request):
                 print(f"預測錯誤: {e}")
                 error_msg = f"預測過程發生錯誤: {str(e)}"
 
-    return render(request, 'home.html', {'result': result, 'error': error_msg})
+    return render(request, 'home.html', {
+        'result': result,
+        'error': error_msg,
+        'districts_by_city': districts_by_city,
+    })

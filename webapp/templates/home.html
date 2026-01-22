@@ -548,6 +548,29 @@
         <form method="POST" id="predictForm">
             {% csrf_token %}
 
+            <!-- 地區 -->
+            <div class="section">
+                <div class="section-title">地區</div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="city">城市</label>
+                        <select id="city" name="city" required>
+                            <option value="">請選擇城市</option>
+                            <option value="台北市">台北市</option>
+                            <option value="新北市">新北市</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="district">鄉鎮市區</label>
+                        <select id="district" name="district" required>
+                            <option value="">請先選擇城市</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
             <!-- 基本資訊 -->
             <div class="section">
                 <div class="section-title">基本資訊</div>
@@ -691,6 +714,10 @@
 
             <div class="result-details">
                 <div class="detail-row">
+                    <span class="detail-label">地區</span>
+                    <span class="detail-value">{{ result.city }} {{ result.district }}</span>
+                </div>
+                <div class="detail-row">
                     <span class="detail-label">坪數</span>
                     <span class="detail-value">{{ result.area }} 坪</span>
                 </div>
@@ -788,12 +815,34 @@
 
         <div class="model-info">
             模型：<strong>Random Forest</strong> |
-            準確度：<strong>R² = 0.67</strong> |
+            準確度：<strong>R² = 0.82</strong> |
             資料來源：<strong>實價登錄</strong>
         </div>
     </div>
 
     <script>
+        // 地區資料
+        const districtsByCity = {{ districts_by_city|safe }};
+
+        // 城市選擇變更時更新鄉鎮市區
+        document.getElementById('city').addEventListener('change', function() {
+            const city = this.value;
+            const districtSelect = document.getElementById('district');
+
+            // 清空現有選項
+            districtSelect.innerHTML = '<option value="">請選擇鄉鎮市區</option>';
+
+            if (city && districtsByCity[city]) {
+                const districts = districtsByCity[city].sort();
+                districts.forEach(function(district) {
+                    const option = document.createElement('option');
+                    option.value = district;
+                    option.textContent = district;
+                    districtSelect.appendChild(option);
+                });
+            }
+        });
+
         // Checkbox styling
         document.querySelectorAll('.checkbox-item').forEach(function(item) {
             const checkbox = item.querySelector('input[type="checkbox"]');
@@ -802,7 +851,6 @@
                 item.classList.toggle('checked', this.checked);
             });
 
-            // Initialize state
             if (checkbox.checked) {
                 item.classList.add('checked');
             }
