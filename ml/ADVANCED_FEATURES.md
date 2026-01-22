@@ -228,19 +228,3 @@ Gradient Boosting  0.8123      4,789         3,678     14.56%
 2. **可解釋性**：特徵重要性、SHAP值基礎
 3. **穩健性**：Bootstrap、交叉驗證
 4. **診斷能力**：識別過擬合、欠擬合、共線性
-
-## 📚 參考文獻
-
-- Diebold, F. X., & Mariano, R. S. (1995). Comparing predictive accuracy.
-- Friedman, M. (1937). The use of ranks to avoid the assumption of normality.
-- Efron, B., & Tibshirani, R. J. (1994). An introduction to the bootstrap.
-- Chen, T., & Guestrin, C. (2016). XGBoost: A scalable tree boosting system.
-
-## 🔧 進一步擴展
-
-可以考慮添加：
-1. **SHAP值分析**：更進階的模型解釋
-2. **分位數迴歸**：預測租金區間
-3. **貝葉斯方法**：參數後驗分佈
-4. **因果推論**：傾向分數匹配
-5. **自動特徵選擇**：遞迴特徵消除（RFE）
